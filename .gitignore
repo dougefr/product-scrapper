@@ -1,0 +1,7 @@
+*.out
+dist/
+.make.setup*
+.idea/
+bin/
+.env
+.DS*

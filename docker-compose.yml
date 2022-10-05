@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+  api:
+    ports:
+      - "8888:8888"
+    build:
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      ENV_NAME: dev
+      REDIS_ADDR: redis:6379
+      CHROMIUM_ADDR: http://chromium:9222
+  chromium:
+    image: montferret/chromium
+    restart: always
+  redis:
+    image: redis
+    restart: always

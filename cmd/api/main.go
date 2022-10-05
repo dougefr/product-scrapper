@@ -1,0 +1,55 @@
+package main
+
+import (
+	"context"
+
+	"github.com/dougefr/product-scrapper/cmd/api/controller"
+	"github.com/dougefr/product-scrapper/cmd/api/middleware"
+	logger2 "github.com/dougefr/product-scrapper/domain/contract/logger"
+	"github.com/dougefr/product-scrapper/domain/entity"
+	"github.com/dougefr/product-scrapper/domain/usecase"
+	env2 "github.com/dougefr/product-scrapper/infra/env"
+	"github.com/dougefr/product-scrapper/infra/logger"
+	"github.com/dougefr/product-scrapper/infra/redis"
+	"github.com/dougefr/product-scrapper/infra/scrapper"
+	"github.com/gofiber/fiber/v2"
+
+	_ "github.com/dougefr/product-scrapper/docs"
+)
+
+// @title Product Scrapper API
+// @description Product Scrapper API
+// @BasePath /product-scrapper-api/v1
+func main() {
+	// Infras
+	log := logger.NewLogger()
+	env := env2.NewEnv()
+	redisClient := redis.NewRedis[entity.Product](env, log)
+	scrapperFactory := scrapper.NewFactory(log, env)
+
+	// Usecases
+	scrapProductInfoUC := usecase.NewScrapProduct(log, redisClient, scrapperFactory)
+
+	// Controllers
+	healthCheckCtrl := controller.NewHealthCheck(log)
+	productCtrl := controller.NewProduct(log, scrapProductInfoUC)
+
+	// Middlewares
+	requestIdMid := middleware.NewRequestId()
+	logMid := middleware.NewLog(log)
+	errorHandler := middleware.NewHandlerError()
+
+	// App
+	app := fiber.New()
+	api := app.Group("/product-scrapper-api/v1")
+	middleware.SetMiddlewares(app, requestIdMid, logMid, errorHandler)
+	controller.SetControllersRoutes(app, api, healthCheckCtrl, productCtrl)
+
+	// Start service
+	err := app.Listen(":8888")
+	if err != nil {
+		log.Fatal(context.Background(), "fatal error creating http server", logger2.Body{
+			"err": err,
+		})
+	}
+}
