@@ -15,6 +15,18 @@ make run
 ```
 A aplicação ficará disponibilizada na porta 8888, e o swagger pode ser acessado em http://localhost:8888/swagger
 
+Exemplo de requisição suportada pela API:
+
+```shell
+curl -X 'POST' \
+  'http://localhost:8888/product-scrapper-api/v1/products' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "url": "https://www.amazon.com.br/Colch%C3%A3o-Ensacadas-Espuma-Viscoel%C3%A1stica-Ortop%C3%A9dico/dp/B08LH5L7TK/ref=cm_cr_arp_d_product_top?ie=UTF8&th=1"
+}'
+```
+
 ### Aplicação rodando com docker compose
 
 Ao invés de executar a aplicação separadamente, é possível executá-la com o docker compose: `docker compose up --build`
