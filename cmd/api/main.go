@@ -5,10 +5,10 @@ import (
 
 	"github.com/dougefr/product-scrapper/cmd/api/controller"
 	"github.com/dougefr/product-scrapper/cmd/api/middleware"
-	logger2 "github.com/dougefr/product-scrapper/domain/contract/logger"
+	"github.com/dougefr/product-scrapper/domain/contract/logger"
 	"github.com/dougefr/product-scrapper/domain/entity"
 	"github.com/dougefr/product-scrapper/domain/usecase"
-	env2 "github.com/dougefr/product-scrapper/infra/env"
+	"github.com/dougefr/product-scrapper/infra/osenv"
 	"github.com/dougefr/product-scrapper/infra/ferret"
 	"github.com/dougefr/product-scrapper/infra/redis"
 	"github.com/dougefr/product-scrapper/infra/zap"
@@ -23,7 +23,7 @@ import (
 func main() {
 	// Infras
 	log := zap.NewLogger()
-	env := env2.NewEnv()
+	env := osenv.NewEnv()
 	redisClient := redis.NewRedis[entity.Product](env, log)
 	scrapperFactory := ferret.NewFactory(log, env)
 
@@ -48,7 +48,7 @@ func main() {
 	// Start service
 	err := app.Listen(":8888")
 	if err != nil {
-		log.Fatal(context.Background(), "fatal error creating http server", logger2.Body{
+		log.Fatal(context.Background(), "fatal error creating http server", logger.Body{
 			"err": err,
 		})
 	}
