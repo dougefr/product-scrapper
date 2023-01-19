@@ -1,4 +1,4 @@
-package scrapper
+package ferret
 
 import (
 	"context"

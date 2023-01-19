@@ -9,9 +9,9 @@ import (
 	"github.com/dougefr/product-scrapper/domain/entity"
 	"github.com/dougefr/product-scrapper/domain/usecase"
 	env2 "github.com/dougefr/product-scrapper/infra/env"
-	"github.com/dougefr/product-scrapper/infra/logger"
+	"github.com/dougefr/product-scrapper/infra/ferret"
 	"github.com/dougefr/product-scrapper/infra/redis"
-	"github.com/dougefr/product-scrapper/infra/scrapper"
+	"github.com/dougefr/product-scrapper/infra/zap"
 	"github.com/gofiber/fiber/v2"
 
 	_ "github.com/dougefr/product-scrapper/docs"
@@ -22,10 +22,10 @@ import (
 // @BasePath /product-scrapper-api/v1
 func main() {
 	// Infras
-	log := logger.NewLogger()
+	log := zap.NewLogger()
 	env := env2.NewEnv()
 	redisClient := redis.NewRedis[entity.Product](env, log)
-	scrapperFactory := scrapper.NewFactory(log, env)
+	scrapperFactory := ferret.NewFactory(log, env)
 
 	// Usecases
 	scrapProductInfoUC := usecase.NewScrapProduct(log, redisClient, scrapperFactory)

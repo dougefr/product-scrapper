@@ -1,4 +1,4 @@
-package scrapper
+package ferret
 
 import (
 	"context"
@@ -7,28 +7,28 @@ import (
 	logger2 "github.com/dougefr/product-scrapper/domain/contract/logger"
 )
 
-type amazon struct {
+type zattini struct {
 	*base
 }
 
-func newAmazon(
+func newZattini(
 	ctx context.Context,
 	logger logger2.Logger,
 	url string,
 	env env.Env,
-) (a *amazon, err error) {
+) (z *zattini, err error) {
 
 	b, err := newBase(
 		ctx,
 		logger,
 		url,
 		env,
-		"span[id=\"productTitle\"]",
-		"div[id=\"feature-bullets\"]",
-		"img[id=\"landingImage\"]",
-		"span.a-price > span.a-offscreen")
+		"h1[data-productname]",
+		"p[itemprop=\"description\"]",
+		"section.photo > figure > img",
+		"div.default-price > * > strong")
 
-	a = &amazon{
+	z = &zattini{
 		base: b,
 	}
 
